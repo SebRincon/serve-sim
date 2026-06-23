@@ -139,11 +139,15 @@ function App() {
   const [uiStarted, setUiStarted] = useState<Set<string>>(() => new Set());
   const hasPending =
     Object.values(starting).some(Boolean) || Object.values(shuttingDown).some(Boolean);
-  const { devices: gridDevices, refresh: refreshGrid } = useGridDevices(
-    gridApiEndpoint,
-    true,
-    hasPending,
-  );
+  const {
+    devices: gridDevices,
+    total: gridTotal,
+    refresh: refreshGrid,
+    loadMore: loadMoreGrid,
+    loadAll: loadAllGrid,
+    resetPage: resetGridPage,
+    hasMore: gridHasMore,
+  } = useGridDevices(gridApiEndpoint, true, hasPending);
   // Re-subscribe the stream SSE the instant the selected device gains (or loses)
   // a helper, so its config lands as soon as it boots rather than waiting on the
   // next filesystem-watch tick — the stream appears sooner after boot.
@@ -348,6 +352,11 @@ function App() {
         width={gridPanelWidth}
         side="left"
         devices={gridDevices}
+        total={gridTotal}
+        hasMore={gridHasMore}
+        onLoadMore={loadMoreGrid}
+        onLoadAll={loadAllGrid}
+        onResetPage={resetGridPage}
         selectedUdid={effectiveUdid}
         onSelect={selectDevice}
         starting={starting}
